@@ -13,16 +13,17 @@ import (
 
 func Upload(c *gin.Context) {
 	returnData := utilities.ResponseJson{}
-	err := utilities.GetUserSessionDetails(c)
+	claims, err := utilities.GetUserSessionDetails(c)
 
 	if err != nil {
 		utilities.ErrorResponse(&returnData, "Unauthorized User!")
 		return
 	}
 
-	//if utilities.IsAuthTokenValid(claims) {
-	//	utilities.ErrorResponse(&returnData, "Session Expired")
-	//}
+	if !claims {
+		utilities.ErrorResponse(&returnData, "Session Expired!")
+		return
+	}
 
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {

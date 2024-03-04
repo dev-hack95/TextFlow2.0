@@ -48,20 +48,32 @@ func VerifyPassword(userPassword string, providedPassword string) bool {
 	return check
 }
 
-func VerifyToken(tokenString string) error {
+func VerifyToken(tokenString string) (bool, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return sampleSecretKey, nil
 	})
 
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if !token.Valid {
 		logs.Error("Error: ", "Token is invalid!")
 	}
 
-	return nil
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok {
+		logs.Error("Error: ", "Session Expired!")
+	}
+
+	adminClaim, ok := claims["admin"].(bool)
+
+	if !ok {
+		logs.Error("Error: ", "Session Expired!")
+	}
+
+	return adminClaim, nil
 }
 
 func StringGenerator(data string) (string, error) {
