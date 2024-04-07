@@ -6,7 +6,7 @@ import (
 
 func IsEmpty(s interface{}) bool {
 	if s == nil || cast.ToString(s) == "" {
-		return true
+		return false
 	}
-	return false
+	return true
 }

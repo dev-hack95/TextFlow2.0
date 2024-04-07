@@ -38,7 +38,7 @@ func EnableSQLDatabasesConfiguration() {
 }
 
 func GetDBInstance() (*mongo.Client, error) {
-	uri := "mongodb://192.168.29.186:27017/products"
+	uri := "mongodb://192.168.29.7:27017/textflow"
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 
 	if err != nil {

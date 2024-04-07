@@ -20,6 +20,7 @@ func main() {
 	router.POST("/v1/signin", handlers.SignIn)
 	// Upload Video to Minio s3 storage
 	router.POST("/v1/upload", handlers.Upload)
+	router.POST("/v1/producer", handlers.Produce)
 
 	router.Run("0.0.0.0:8000")
 }

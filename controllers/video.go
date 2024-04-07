@@ -57,3 +57,58 @@ func Upload(data structs.VideoPayload) (returnData utilities.ResponseJson) {
 	utilities.SuccessResponse(&returnData, response)
 	return
 }
+
+func Produce(data structs.VideoPayload) (returnData utilities.ResponseJson) {
+	response := struct {
+		Email string `json:"email"`
+		Video string `json:"video"`
+		Audio string `json:"audio"`
+		Text  string `json:"text"`
+	}{
+		Email: data.Email,
+		Video: data.Video,
+		Audio: data.Audio,
+		Text:  data.Text,
+	}
+
+	producer, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": "192.168.29.7:9092",
+		"acks":              "all",
+	})
+	if err != nil {
+		utilities.ErrorResponse(&returnData, err.Error())
+		return
+	}
+
+	defer producer.Close()
+
+	topic := "Kafkatopic2"
+	deliveryChan := make(chan kafka.Event)
+
+	responseJson, err := json.Marshal(response)
+	if err != nil {
+		utilities.ErrorResponse(&returnData, err.Error())
+		return
+	}
+
+	err = producer.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          responseJson,
+	}, deliveryChan)
+
+	if err != nil {
+		utilities.ErrorResponse(&returnData, err.Error())
+		return
+	}
+
+	e := <-deliveryChan
+	msg := e.(*kafka.Message)
+
+	if msg.TopicPartition.Error != nil {
+		utilities.ErrorResponse(&returnData, msg.TopicPartition.Error.Error())
+		return
+	}
+
+	utilities.SuccessResponse(&returnData, response)
+	return
+}

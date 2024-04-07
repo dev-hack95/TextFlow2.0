@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github/dev-hack95/Textflow/controllers"
 	"github/dev-hack95/Textflow/structs"
 	"github/dev-hack95/Textflow/utilities"
@@ -48,9 +49,11 @@ func SignIn(c *gin.Context) {
 
 	inputobj := structs.UserSignIn{}
 	_ = json.Unmarshal(body, &inputobj)
+	fmt.Println(string(body))
 
 	switch {
 	case !utilities.IsEmpty(inputobj):
+		fmt.Println("Hello World")
 		returnData = controllers.SignIn(inputobj)
 	default:
 		utilities.ErrorResponse(&returnData, "Unbale to login")
