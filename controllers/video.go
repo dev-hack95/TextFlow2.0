@@ -59,17 +59,6 @@ func Upload(data structs.VideoPayload) (returnData utilities.ResponseJson) {
 }
 
 func Produce(data structs.VideoPayload) (returnData utilities.ResponseJson) {
-	response := struct {
-		Email string `json:"email"`
-		Video string `json:"video"`
-		Audio string `json:"audio"`
-		Text  string `json:"text"`
-	}{
-		Email: data.Email,
-		Video: data.Video,
-		Audio: data.Audio,
-		Text:  data.Text,
-	}
 
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": "192.168.29.7:9092",
@@ -85,7 +74,7 @@ func Produce(data structs.VideoPayload) (returnData utilities.ResponseJson) {
 	topic := "Kafkatopic2"
 	deliveryChan := make(chan kafka.Event)
 
-	responseJson, err := json.Marshal(response)
+	responseJson, err := json.Marshal(data)
 	if err != nil {
 		utilities.ErrorResponse(&returnData, err.Error())
 		return
@@ -109,6 +98,6 @@ func Produce(data structs.VideoPayload) (returnData utilities.ResponseJson) {
 		return
 	}
 
-	utilities.SuccessResponse(&returnData, response)
+	utilities.SuccessResponse(&returnData, responseJson)
 	return
 }

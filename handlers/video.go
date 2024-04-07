@@ -39,7 +39,7 @@ func Upload(c *gin.Context) {
 	}
 
 	switch {
-	case !utilities.IsEmpty(body):
+	case utilities.IsEmpty(body):
 		returnData = controllers.Upload(inputobj)
 	default:
 		utilities.ErrorResponse(&returnData, "Error occured at uploding data!")
@@ -52,7 +52,7 @@ func Produce(c *gin.Context) {
 	returnData := utilities.ResponseJson{}
 	claims, err := utilities.GetUserSessionDetails(c)
 	if err != nil {
-		utilities.ErrorResponse(&returnData, "Session Expired!")
+		utilities.ErrorResponse(&returnData, "Unauthorized User!")
 		return
 	}
 
@@ -63,7 +63,7 @@ func Produce(c *gin.Context) {
 
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		utilities.ErrorResponse(&returnData, "Error occured while reading payload")
+		utilities.ErrorResponse(&returnData, "Error occured while reading paylod!")
 		return
 	}
 
@@ -76,7 +76,7 @@ func Produce(c *gin.Context) {
 	}
 
 	switch {
-	case !utilities.IsEmpty(body):
+	case utilities.IsEmpty(body):
 		returnData = controllers.Produce(inputobj)
 	default:
 		utilities.ErrorResponse(&returnData, "Error occured at uploding data!")
